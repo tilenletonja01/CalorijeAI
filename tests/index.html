@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Testi</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 15px/1.5 -apple-system, system-ui, sans-serif; margin: 0; padding: 16px; background: Canvas; color: CanvasText; }
+    h1 { font-size: 20px; }
+    li { margin: 2px 0; list-style: none; }
+    .ok::before { content: '✓ '; color: #1f9d55; }
+    .fail::before { content: '✗ '; color: #d70015; }
+    .err { color: #d70015; font-size: 13px; margin-left: 18px; }
+    ul { padding: 0; }
+  </style>
+</head>
+<body>
+  <h1 id="summary">Testi se izvajajo …</h1>
+  <ul id="list"></ul>
+  <script type="module">
+    import { run } from './all.js';
+    const results = await run();
+    const list = document.getElementById('list');
+    let failed = 0;
+    for (const r of results) {
+      const li = document.createElement('li');
+      li.className = r.ok ? 'ok' : 'fail';
+      li.textContent = r.name;
+      if (!r.ok) {
+        failed++;
+        const e = document.createElement('div');
+        e.className = 'err';
+        e.textContent = r.error;
+        li.append(e);
+      }
+      list.append(li);
+    }
+    document.getElementById('summary').textContent =
+      `${results.length - failed}/${results.length} testov uspešnih`;
+    document.body.dataset.done = failed ? 'fail' : 'ok';
+  </script>
+</body>
+</html>
